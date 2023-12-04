@@ -1,0 +1,22 @@
+To run the code:
+Input:
+n m (where n is the number of variables(1 to n) and m is the number of clauses)
+1 2 3 (This is the clause format with one space between variables)
+1 -2 3 (The character '-' is used to )
+
+Output:
+# of satisfied clauses
+Var: T or F (assignment)
+
+To run test code run the command:
+sh run_test_cases_approx.sh or sh run_test_cases_exact.sh
+Cases 1,2, and 3 will run and complete 
+while case 4 needs to be commented back into to run.
+Case 4 takes over 20 min to complete and may be stopped by pressing CTRL + C for the exact solution (will run fine for approx)
+
+Test cases are the cases#
+
+Python code exact solution is in exact_solution.py
+Python code approx solution is in approx_solution.py
+
+Make sure all files are in the same folder
