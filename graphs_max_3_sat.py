@@ -13,12 +13,21 @@ def evaluate_clause(clause, assignment):
     return 0
 
 
+def evaluate_clause_brute(clause, assignment):
+    for literal in clause:
+        variable, is_negated = abs(literal), (literal < 0)
+        if (assignment[variable - 1] == 1 and not is_negated) or (assignment[variable - 1] == 0 and is_negated):
+            return 1
+    return 0
+
+
 def max_3sat_brute_force(clauses, num_vars):
     best_assignment = None
     best_score = 0
 
-    for assignment in product([0, 1], repeat=num_vars + 1):
-        score = sum(evaluate_clause(clause, assignment) for clause in clauses)
+    for assignment in product([0, 1], repeat=num_vars):
+        assignment = list(assignment)
+        score = sum(evaluate_clause_brute(clause, assignment) for clause in clauses)
         if score > best_score:
             best_score = score
             best_assignment = assignment
@@ -102,15 +111,21 @@ def create_graphs_compare():
     sample = np.array([i for i in range(1, 21)])
     for x in sample:
         clauses = generate_random_cnf(x, x)
-        ba1, _ = max_3sat_brute_force(clauses, x)
-        ba2, _ = max_3sat_approx(clauses, x)
+        ba1, score1 = max_3sat_brute_force(clauses, x)
+        ba2, score2 = max_3sat_approx(clauses, x)
         diff_count = 0
 
+        print(clauses)
+        print(score1)
+        print(ba1)
+        print(score2)
+        print(ba2)
         for i in range(len(ba1)):
             if i < len(ba2) and ba1[i] != ba2[i]:
                 diff_count += 1
             if i >= len(ba2):
                 diff_count += 1
+        print(diff_count)
         y1.append(diff_count)
 
     plt.plot(sample, y1)
@@ -124,10 +139,39 @@ def create_graphs_compare():
     plt.show()
 
 
+def create_randomness_graph(num_runs=10):
+    random.seed(456348)
+    y1 = []
+    sample = np.array([i for i in range(1, 101)])
+    for x in sample:
+        diff_count = 0
+        prev_assignment, _ = max_3sat_approx(generate_random_cnf(x, x), x)
+        for _ in range(num_runs):
+            clauses = generate_random_cnf(x, x)
+            assignment, _ = max_3sat_approx(clauses, x)
+            for i in range(len(assignment)):
+                if assignment[i] != prev_assignment[i]:
+                    diff_count += 1
+            prev_assignment = assignment
+        diff_count = diff_count // num_runs
+        y1.append(diff_count)
+
+    plt.plot(sample, y1)
+
+    # Graph setup
+    plt.title("Randomness of Approximation for Max 3-SAT")
+    plt.xlabel("Number of clauses and variables")
+    plt.ylabel("Number of Differences")
+    plt.grid()
+    plt.legend()
+    plt.show()
+
+
 def main():
     create_graphs_exact()
     create_graphs_approx()
     create_graphs_compare()
+    create_randomness_graph()
 
 
 if __name__ == "__main__":

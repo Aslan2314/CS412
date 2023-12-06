@@ -4,7 +4,7 @@ from itertools import product
 def evaluate_clause(clause, assignment):
     for literal in clause:
         variable, is_negated = abs(literal), (literal < 0)
-        if (assignment[variable] == 1 and not is_negated) or (assignment[variable] == 0 and is_negated):
+        if (assignment[variable - 1] == 1 and not is_negated) or (assignment[variable - 1] == 0 and is_negated):
             return 1
     return 0
 
@@ -13,7 +13,8 @@ def max_3sat_brute_force(clauses, num_vars):
     best_assignment = None
     best_score = 0
 
-    for assignment in product([0, 1], repeat=num_vars + 1):
+    for assignment in product([0, 1], repeat=num_vars):
+        assignment = list(assignment)
         score = sum(evaluate_clause(clause, assignment) for clause in clauses)
         if score > best_score:
             best_score = score
@@ -32,7 +33,7 @@ def main():
     print(best_score)
     for i in range(1, n + 1):
         print(f"{i} ", end="")
-        if best_assignment[i] == 0:
+        if best_assignment[i - 1] == 0:
             print("F")
         else:
             print("T")
