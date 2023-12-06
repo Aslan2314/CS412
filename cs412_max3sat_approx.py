@@ -15,7 +15,6 @@ def max_3sat_approx(clauses, num_vars):
         variable = abs(selected_literal)
         is_negated = (selected_literal < 0)
         assignment[variable] = 1 if not is_negated else 0
-        print(assignment[1:])
     max_satisfied_clauses = sum(1 for clause in clauses if evaluate_clause(clause, assignment))
     return assignment[1:], max_satisfied_clauses
 
